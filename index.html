@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Happy Birthday — Cut the Cake</title>
+<style>
+:root{
+  --bg-1:#0f2340;
+  --bg-2:#121a3a;
+  --accent:#ff8aa0;
+  --muted:#dfe7ff;
+  --glass: rgba(255,255,255,0.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background: linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  color:#fff;
+  overflow-x:hidden;
+  line-height:1.3;
+}
+
+/* ---------- LANDING ---------- */
+#landing{
+  position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background: radial-gradient(circle at 20% 20%, #ffcae1 0%, #ffd6c2 40%, transparent 60%);
+  z-index:9999;transition:opacity .9s ease,transform .9s ease;
+}
+#landing.hidden{opacity:0;pointer-events:none;transform:scale(.98)}
+.gift-box{
+  width:170px;height:170px;border-radius:18px;
+  background: linear-gradient(135deg,#ff647b,#ff9ab3);
+  display:flex;align-items:center;justify-content:center;font-size:3.5rem;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35), 0 6px 14px rgba(0,0,0,0.25);
+  cursor:pointer;transition:transform .25s ease; user-select:none;
+}
+.gift-box:active{transform:scale(.97)}
+.landing-text{margin-top:18px;color:#fff;font-weight:600;font-size:1.05rem;text-shadow:0 2px 18px rgba(0,0,0,.25)}
+
+/* ---------- MAIN ---------- */
+#main{opacity:0;transition:opacity .8s ease}
+#main.visible{opacity:1}
+.hero{
+  min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:6vh 18px;
+}
+.hero h1{
+  font-size:3.2rem;line-height:1.02;
+  background:linear-gradient(90deg,#fff 0%, #ffd7e6 40%, #ffd7e6 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow: 0 14px 40px rgba(255,150,180,0.08);
+  margin-bottom:12px;
+}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:780px;margin:0 auto 8px}
+
+/* ---------- CAKE SECTION ---------- */
+.cake-section{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding:70px 18px 90px; display:flex;flex-direction:column;align-items:center;gap:22px;
+}
+.section-title{font-size:1.4rem;color:#fff;font-weight:700}
+.cake-outer{
+  width:380px;max-width:92vw; height:auto; position:relative; display:flex; align-items:center; justify-content:center;
+  perspective:1200px;
+}
+.cake-inner{
+  width:100%; max-width:380px; height:auto; position:relative; border-radius:16px; overflow:hidden;
+  display:flex;
+}
+.half{
+  width:50%; height:100%; overflow:hidden; transition:transform .9s cubic-bezier(.2,.9,.2,1), filter .5s;
+}
+.half img{
+  width:200%; height:auto; object-fit:cover; user-select:none; pointer-events:none;
+}
+.half.left img{transform:translateX(0);}
+.half.right img{transform:translateX(-50%);}
+.half.left{border-radius:16px 0 0 16px;}
+.half.right{border-radius:0 16px 16px 0;}
+.plate{
+  position:absolute;left:50%;transform:translateX(-50%);bottom:-18px;width:85%;height:26px;border-radius:999px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  filter: blur(8px); opacity:.9;
+}
+.knife{
+  position:absolute;width:160px;height:60px;left:50%;top:48%;transform:translate(-50%,-50%) rotate(-22deg);
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.knife svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 18px rgba(0,0,0,.5))}
+.cake-outer.cut .half.left{transform:translateX(-120%) rotate(-4deg)}
+.cake-outer.cut .half.right{transform:translateX(120%) rotate(4deg)}
+.cake-outer.cut .knife{opacity:1; animation:knife-swipe .9s ease forwards}
+@keyframes knife-swipe{
+  0%{transform:translate(-50%,-60%) rotate(-22deg)}
+  40%{transform:translate(-10%,-50%) rotate(-4deg)}
+  60%{transform:translate(10%,-45%) rotate(8deg)}
+  100%{transform:translate(250%,-50%) rotate(12deg)}
+}
+.cake-outer.cut .half img{filter:drop-shadow(0 20px 40px rgba(255,120,150,0.07))}
+.cake-outer.cut .half{filter:brightness(1.02)}
+.cake-outer.cut .plate{transform:scale(1.04); transition:transform .8s ease}
+
+/* ---------- CONFETTI ---------- */
+.confetti{
+  position:fixed;width:10px;height:14px;z-index:2000;opacity:1;border-radius:2px;
+  animation:conf-fall linear forwards;
+}
+@keyframes conf-fall{
+  0%{transform:translateY(-10vh) rotate(0deg); opacity:1}
+  100%{transform:translateY(110vh) rotate(720deg); opacity:0}
+}
+
+/* ---------- SPECIAL MOMENTS ---------- */
+.gallery{
+  padding:80px 18px 140px;
+  background:linear-gradient(180deg, rgba(0,0,0,0.06), transparent);
+}
+.gallery-header{
+  text-align:center; max-width:1100px; margin:0 auto 32px;
+}
+.gallery-header h2{font-size:2rem;color:#ffcade;margin-bottom:6px;text-shadow:0 4px 18px rgba(255,200,220,0.5);}
+.gallery-header p{color: #d7e6ff; opacity:.85; font-size:1rem;}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:24px; max-width:1200px; margin:0 auto;}
+.card{position:relative; perspective:1000px;}
+.card-img{position:relative; border-radius:16px; overflow:hidden; cursor:pointer; transform-style:preserve-3d; transition: transform 0.6s ease, box-shadow 0.6s ease;}
+.card-img img{width:100%; display:block; object-fit:cover; transition: transform 0.6s ease;}
+.card-img .overlay{position:absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.0)); color:#fff; opacity:0; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding:16px; text-align:center; transition: opacity 0.4s ease, transform 0.4s ease; border-radius:16px;}
+.card-img .overlay h4{margin-bottom:4px; font-size:1.1rem; color:#ffcade;}
+.card-img:hover{transform: rotateX(8deg) rotateY(4deg) scale(1.08); box-shadow:0 25px 60px rgba(255,150,180,0.4);}
+.card-img:hover img{transform: scale(1.12);}
+.card-img:hover .overlay{opacity:1; transform:translateY(0);}
+.photo-desc{margin-top:8px; text-align:center; font-size:.95rem; color:#d7e6ff; opacity:.9;}
+.feelings-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  background: linear-gradient(145deg, var(--bg-1), var(--bg-2));
+}
+
+.feelings-card {
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px 30px;
+  color: var(--muted);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  line-height: 1.8;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feelings-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 30px rgba(255, 138, 160, 0.3);
+}
+
+.feelings-card h2 {
+  color: var(--accent);
+  margin-bottom: 20px;
+  font-size: 1.8em;
+}
+
+/* 📱 Responsive Adjustments for Mobile */
+@media (max-width: 600px) {
+  .feelings-section {
+    padding: 40px 15px;
+  }
+
+  .feelings-card {
+    padding: 25px 20px;
+  }
+
+  .feelings-card h2 {
+    font-size: 1.5em;
+  }
+
+  .feelings-card p {
+    font-size: 0.95em;
+    line-height: 1.6;
+  }
+}
+
+@media(max-width:768px){.gallery-header h2{font-size:1.75rem;} .grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px;}}
+@media(max-width:480px){.gallery-header h2{font-size:1.5rem;} .card-img:hover{transform:none; box-shadow:none;}}
+
+.muted{color: #d7e6ff;opacity:.85;font-size:.95rem}
+.center{display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <div class="gift-box" id="gift">🎁</div>
+  <div class="landing-text">Amukunga yetho enala mudinchathu</div>
+</div>
+
+<!-- MAIN -->
+<main id="main">
+  <header class="hero">
+    <h1>🎉 Happy Birthday CHOTTU🎂</h1>
+    <p class="muted"></p>
+  </header>
+
+  <!-- CAKE -->
+  <section class="cake-section">
+    <div class="section-title">Vetunga</div>
+    <div class="cake-outer center" id="cakeOuter" role="button" tabindex="0">
+      <div class="cake-inner">
+        <div class="half left"><img src="https://png.pngtree.com/png-vector/20230918/ourmid/pngtree-birthday-cake-png-png-image_10128591.png" alt="Cake left half"></div>
+        <div class="half right"><img src="https://png.pngtree.com/png-vector/20230918/ourmid/pngtree-birthday-cake-png-png-image_10128591.png" alt="Cake right half"></div>
+        <div class="plate"></div>
+      </div>
+      <div class="knife">
+        <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gKnife" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#fff" stop-opacity="0.95"/>
+              <stop offset="1" stop-color="#cfd6ff" stop-opacity="0.95"/>
+            </linearGradient>
+            <filter id="f" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0b1220" flood-opacity="0.45"/>
+            </filter>
+          </defs>
+          <g filter="url(#f)">
+            <rect x="10" y="22" rx="8" ry="8" width="140" height="18" fill="url(#gKnife)"/>
+            <rect x="150" y="28" rx="4" ry="4" width="40" height="8" fill="#6b4b3b"/>
+            <rect x="188" y="34" width="4" height="4" fill="#6b4b3b"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPECIAL MOMENTS -->
+  <section class="gallery" id="specialMoments">
+    <div class="gallery-header">
+      <h2>Namaloda Memories</h2>
+      <p class="muted">konjon recollect panuvoma!</p>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img"> 
+          <img src="73.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="74.jpg" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="29.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="63.png" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"> </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="66.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="62.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="49.png" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">It all started with this ithu dhan nenga enakaga first pana photo idhula irunthu than nama pesa start panon</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="44.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apro inga poi vakanthun romba neram pesunon</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="37.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithu marakave mudiyatha spot </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="41.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apro inga ungala pakun pothu romba excited ah vanthinga vetla irunthu Nama trip ku</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="79.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Then our trip started orey lalalaa moment than </p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="48.png" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apro enna nala mass ah photo la eduthu kuduthinga </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="9.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Unga intha photo pudichu poi dp eh vachitan </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="7.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Nama senthu munji photo edukama kala photo eduthon but still this is our photo senthu </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="6.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">inun intha spot la kanulaye nikuthu la</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="47.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apro ingala vanthu biryani saptu day end panon chai un kudichon bestest day ever</p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="50.png" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apro inthan nama 2 peru munjiun senthu edutha 1st photo</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="72.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Angel kuda senthu ingalan chai kudichan na</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="14.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithan nama 1st senthu pona movie na athuvun seema movie  </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="15.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">intha photovun neye kupta dhan edutha</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="51.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"> Apro leave ku apro nama first patha day ithan intha day la beach kulan ponon suprise un panen ana antha photos la illa la last ah nama anaiku chai kudicha phto dhan iruku </p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="12.jpg" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"> Nama canteen la edutha 1st photo </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="19.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Na first pani kondu vantha dish but nala varla analun nee sapta enakaga</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="18.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apola daily fit check edupon la </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="17.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="21.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="52.png" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apo twinning la panuvon na </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="39.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Intha spot nyavo iruka jelly mari iruchu nu sollingale very special spot for me</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="40.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Intha spot varun pothu ithu varaiku na patuku gamunu irupan neye ellamey panirva nala irukun</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="23.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"> Inthu romba nala vanchu na nala irunchu un reaction </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="26.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithu unexpected na</p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="43.jpg" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithu nama kada mariye airchu na </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="27.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithuvun Anga pona ingayun poiruvon</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="24.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Intha momos sion la sapton nala irunchu na</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="54.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Nama ithu sapta anaiku tha dj la eluthnon saniyan ipo paint panitan atha</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="55.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Intha beef nala irunchu na</p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="53.png" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apro cheta kadai oda iconic na ithu</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="65.png" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Intha spot un nama inun oru vedu mari airchu na nerya saptrukon ingayun</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="66.png" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Apro ithu nyavo iruka kadunkappi kudichome </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="60.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Inga unexpected ah ponon ana nala irunchu na</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="33.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Epdiyo ingayun poiton na nala tha irunchu na dish un </p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="32.jpg" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="31.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="34.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Enoda most fav photo therima ithu </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="28.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithuvun romba pudikun</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="58.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithuvun</p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="58.png" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc"></p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="57.png" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Intha photo ungaluku pudikun na </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="61.png" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithuvun nenga enakey teryama eduthinga nala irunchu </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="69.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Intha place la spl na inun unreal ah iruku na nala kai la vangunon</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="67.png" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithu inun oru bestest day romba enjoyy panon </p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="70.png" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Nama veedu</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="36.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Nama inun oru spot </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="71.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Ithu nama permanent spot</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="46.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Cheeta kadai</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="45.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Chai sutta</p>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="75.jpg" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">First pnvl vantha ticket fade eh airuchu</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="76.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Nama first bus travel oda ticket</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="78.jpg" alt="Memory 3">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Nenga kudutha ticket athula nenga pichi pota poo un iruku </p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="42.jpg" alt="Memory 4">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">The unexpected day still feels unreal</p>
+      </article>
+      </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-img">
+          <img src="22.jpg" alt="Memory 1">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Intha kaila irukrathu tha enaku life la kedacha gift eh unayun sethu than sollren</p>
+      </article>
+      <article class="card">
+        <div class="card-img">
+          <img src="35.jpg" alt="Memory 2">
+          <div class="overlay"><h4></h4></div>
+        </div>
+        <p class="photo-desc">Finally here is our sopana sundari neraya memories iruku ithula</p>
+      </article>
+    </div>
+
+  </section>
+  <!-- Feelings Card Section -->
+<section class="feelings-section">
+  <div class="feelings-card">
+    <h2></h2>
+    <p>
+      Happyyy birthdayyy jessyyy chotuuuuu enjoyyy your special day yepola irunthu nama pesa start panirkoma apo la irunthu enaku enaye special ah feel pana vaika oru person kedacha mari iruku we had create a lot of memories inun ithula podama photos illlama neryavo neraya iruku en mind la enaku ithu varaiku nama spend pana tiem ellamey specail than enaku neraya vishyathula nee dhan first im so grateful for that enakaga neraya panirka neraya pasam katirka konchirka ur speical and you will be special forever Happpyyyyyyy birthdayyyyy laaaaaa
+    </p>
+  </div>
+</section>
+
+</main>
+
+<!-- AUDIO -->
+<audio id="audioCut" preload="auto"><source src="Un_Kanney_Aayiram_Kadha_Pesudhey.mp3" type="audio/mpeg"></audio>
+<audio id="audioSpecial" preload="auto"><source src="" type="audio/mpeg"></audio>
+
+<script>
+const landing = document.getElementById('landing');
+const feelingscard = document.getElementById('feelings-card');
+const gift = document.getElementById('gift');
+const main = document.getElementById('main');
+const cakeOuter = document.getElementById('cakeOuter');
+const knife = document.querySelector('.knife');
+const audioCut = document.getElementById('audioCut');
+const audioSpecial = document.getElementById('audioSpecial');
+const specialSection = document.getElementById('specialMoments');
+let cutDone=false, specialPlaying=false;
+
+/* Landing gift click */
+gift.addEventListener('click', ()=>{
+  landing.classList.add('hidden');
+  setTimeout(()=>main.classList.add('visible'),700);
+});
+
+/* Cut cake click */
+cakeOuter.addEventListener('click', ()=>{
+  if(cutDone) return;
+  cutDone=true;
+  cakeOuter.classList.add('cut');
+  safePlay(audioCut,1);
+  confettiBurst(160);
+});
+
+/* Confetti */
+function confettiBurst(count=150){
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti';
+      el.style.left=(10+Math.random()*80)+'%';
+      el.style.background=`hsl(${Math.round(Math.random()*360)},70%,60%)`;
+      el.style.width=(6+Math.random()*10)+'px';
+      el.style.height=(8+Math.random()*16)+'px';
+      el.style.top='-10vh';
+      el.style.opacity=1;
+      el.style.transform=`translateY(-10vh) rotate(${Math.random()*360}deg)`;
+      el.style.animationDuration=(2+Math.random()*1.6)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),4200);
+    },i*6);
+  }
+}
+
+/* Safe audio play */
+function safePlay(audioEl,volume=1){
+  audioEl.volume=0; audioEl.currentTime=0;
+  audioEl.play().then(()=>fadeIn(audioEl,volume,600)).catch(()=>{
+    const resume=()=>{audioEl.play().then(()=>fadeIn(audioEl,volume,600)).catch(()=>{}); window.removeEventListener('click',resume); window.removeEventListener('keydown',resume);}
+    window.addEventListener('click',resume);
+    window.addEventListener('keydown',resume);
+  });
+}
+
+function fadeIn(audioEl,target=1,ms=700){const steps=20;const stepTime=ms/steps;audioEl.volume=0;let i=0;const t=setInterval(()=>{i++;audioEl.volume=Math.min(target,(i/steps)*target);if(i>=steps)clearInterval(t)},stepTime);}
+function fadeOut(audioEl,ms=700){return new Promise(resolve=>{const steps=20;const stepTime=ms/steps;const vol0=audioEl.volume;let i=0;const t=setInterval(()=>{i++;const v=Math.max(0,vol0*(1-i/steps));audioEl.volume=v;if(i>=steps){clearInterval(t);audioEl.pause();audioEl.volume=vol0;resolve();}},stepTime);});}
+
+/* Special Moments IntersectionObserver */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting && entry.intersectionRatio>0.35){
+      if(!specialPlaying){
+        specialPlaying=true;
+        fadeOut(audioCut,600).then(()=>safePlay(audioSpecial,0.95));
+      }
+    }else{
+      if(specialPlaying && cutDone){
+        specialPlaying=false;
+        fadeOut(audioSpecial,600);
+      }
+    }
+  });
+},{threshold:[0.25,0.35]});
+io.observe(specialSection);
+
+/* Accessibility */
+cakeOuter.setAttribute('tabindex','0'); cakeOuter.setAttribute('role','button'); cakeOuter.setAttribute('aria-label','Cut the cake');
+gift.setAttribute('tabindex','0'); gift.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' ') gift.click();});
+cakeOuter.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' ') {e.preventDefault(); cakeOuter.click();}});
+</script>
+</body>
+</html>
